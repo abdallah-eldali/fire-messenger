@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="./src/icon.png" height="48" width="48">
+<img src="./src/icon.png" height="70" width="70">
 Fire Messenger
 </h1>
 

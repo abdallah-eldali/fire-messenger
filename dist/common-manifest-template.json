@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Fire Messenger",
+  "description": "This extension sequentially unsends all messenges in a messenger chain.",
+  "version": "7.1.0",
+
+  "content_scripts": [
+    {
+      "matches": ["http://*.messenger.com/*", "https://*.messenger.com/*"],
+      "js": ["main.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+		"default_icon": "icon.png"
+	},
+
+	"icons": { "555": "icon.png" },
+
+  "permissions": ["activeTab", "storage"],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}

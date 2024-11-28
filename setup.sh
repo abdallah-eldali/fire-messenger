@@ -6,7 +6,12 @@ package_extension() {
 
   name=$(jq '.name' ./src/manifest.json | tr '[:upper:]' '[:lower:]' | tr -s ' ' '-' | tr -d '"') 
 
-  zip -j ./build/$1_$name.zip ./src/*
+  options=''
+  if [ $1 = 'firefox' ]; then
+    options='--exclude *polyfill*.js'
+  fi
+
+  zip -j -FS ./build/$1_$name.zip ./src/* $options
 }
 
 mkdir -p ./build

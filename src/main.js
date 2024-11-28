@@ -391,36 +391,34 @@ if (typeof Node === 'function' && Node.prototype) {
   };
 }
 
-(async function () {
-  chrome.runtime.onMessage.addListener(async function (msg, sender) {
-    // Make sure we are using english language messenger.
-    if (document.documentElement.lang !== 'en') {
-      alert(
-        'ERROR: detected non-English language. Fire Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.',
-      );
-      return;
-    }
-
-    console.log('Got action: ', msg.action);
-    if (msg.action === 'REMOVE') {
-      const doRemove = confirm(
-        'Removal will nuke your messages and will prevent you from seeing the messages of other people in this chat. We HIGHLY recommend backing up your messages first. Continue?',
-      );
-      if (doRemove) {
-        removeHandler();
-      }
-    } else if (msg.action === 'STOP') {
-      localStorage.removeItem(continueKey);
-      reload();
-    } else if (msg.action === 'UPDATE_DELAY') {
-      console.log('Setting delay to', msg.data || DELAY, 'seconds');
-      localStorage.setItem(delayKey, msg.data);
-    } else {
-      console.log('Unknown action.');
-    }
-  });
-
-  if (localStorage.getItem(continueKey)) {
-    removeHandler();
+browser.runtime.onMessage.addListener((msg, sender) => {
+  // Make sure we are using english language messenger.
+  if (document.documentElement.lang !== 'en') {
+    alert(
+      'ERROR: detected non-English language. Fire Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.',
+    );
+    return;
   }
-})();
+
+  console.log('Got action: ', msg.action);
+  if (msg.action === 'REMOVE') {
+    const doRemove = confirm(
+      'Removal will nuke your messages and will prevent you from seeing the messages of other people in this chat. We HIGHLY recommend backing up your messages first. Continue?',
+    );
+    if (doRemove) {
+      removeHandler();
+    }
+  } else if (msg.action === 'STOP') {
+    localStorage.removeItem(continueKey);
+    reload();
+  } else if (msg.action === 'UPDATE_DELAY') {
+    console.log('Setting delay to', msg.data || DELAY, 'seconds');
+    localStorage.setItem(delayKey, msg.data);
+  } else {
+    console.log('Unknown action.');
+  }
+});
+
+if (localStorage.getItem(continueKey)) {
+  removeHandler();
+}

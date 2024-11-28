@@ -10,9 +10,5 @@
 		"default_icon": "icon.png"
 	},
 
-	"icons": { "555": "icon.png" },
-
-	"background": {
-		"scripts": [ "background.js" ]
-	}
+	"icons": { "555": "icon.png" }
 }

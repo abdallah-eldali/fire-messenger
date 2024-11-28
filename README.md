@@ -11,9 +11,14 @@ Fire Messenger (similar to [Shoot the Messenger](https://github.com/theahura/sho
 
 ## Attribution
 
-The [Fire Messenger icon](./src/icon.png) was created using the emojis designed by [OpenMoji](https://openmoji.org/) – the open-source emoji and icon project. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/#)
+### Fire Messenger Icon
+The [Fire Messenger icon](./src/icon.png) was created using and modifying the emojis designed by [OpenMoji](https://openmoji.org/) – the open-source emoji and icon project. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/#)
 
-The Fire Messenger project, including the icon, will be licenced under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) as [GPLv3 is a compatible licence with CC BY-SA 4.0](https://creativecommons.org/share-your-work/licensing-considerations/compatible-licenses/). Following [Section 3(b)(1)](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en#s3b1) of the CC BY-SA 4.0 Licence by applying a BY-SA Compatible Licence (in this case, GPLv3).
+The Fire Messenger project, including the icon, will be licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) as [GPLv3 is a compatible license with CC BY-SA 4.0](https://creativecommons.org/share-your-work/licensing-considerations/compatible-licenses/). Following [Section 3(b)(1)](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en#s3b1) of the CC BY-SA 4.0 License by applying a BY-SA Compatible License (in this case, GPLv3).
+
+### WebExtension API Polyfill
+
+The Fire Messenger extension uses the [WebExtension `browser` API Polyfill](https://github.com/mozilla/webextension-polyfill) library to port Promise-based WebExtension API and the use of `broswer.*` namespace to Google Chrome browsers. The library is licensed under MPL-2.0 and [it's compatible with Fire Messengers' license, GPLv3](https://www.fsf.org/blogs/licensing/mpl-2.0-release). The `browser-polyfill.js` file is MPL-2.0 licensed which is being incorporated into a "Larger Work" under GPLv3 which is permitted as per [Section 3.3 of the MPL-2.0 license](https://www.mozilla.org/en-US/MPL/2.0/).
 
 # Installing
 
@@ -77,7 +82,7 @@ cd fire-messenger
 
 # Issue Reporting
 
-If you encounter any issues, please create a ticket [here](https://github.com/abdallah-eldali/shoot-the-messenger/issues)
+If you encounter any issues, please create a ticket [here](https://github.com/abdallah-eldali/shoot-the-messenger/issues). Please include any logs to help us find the issue quicker.
 
 # Roadmap
 

@@ -52,9 +52,9 @@ const DEBUG_MODE = false; // When set, does not actually remove messages.
 
 const currentURL =
   location.protocol + '//' + location.host + location.pathname;
-const continueKey = 'shoot-the-messenger-continue' + currentURL;
-const lastClearedKey = 'shoot-the-messenger-last-cleared' + currentURL;
-const delayKey = 'shoot-the-messenger-delay' + currentURL;
+const continueKey = 'fire-messenger-continue' + currentURL;
+const lastClearedKey = 'fire-messenger-last-cleared' + currentURL;
+const delayKey = 'fire-messenger-delay' + currentURL;
 
 let scrollerCache = null;
 const clickCountPerElement = new Map();
@@ -396,7 +396,7 @@ if (typeof Node === 'function' && Node.prototype) {
     // Make sure we are using english language messenger.
     if (document.documentElement.lang !== 'en') {
       alert(
-        'ERROR: detected non-English language. Shoot the Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.',
+        'ERROR: detected non-English language. Fire Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.',
       );
       return;
     }

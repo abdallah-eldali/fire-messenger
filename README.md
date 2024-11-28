@@ -60,15 +60,15 @@ Since the Standard Firefox version ignores the `xpinstall.signatures.required` f
 
 1. Clone the [fire-messenger repository](https://github.com/abdallah-eldali/fire-messenger).
 ```bash
-git clone https://github.com/abdallah-eldali/fire-messenger
+$ git clone https://github.com/abdallah-eldali/fire-messenger
 ```
 2. Change to current working directory to the location of the local repository that was just cloned.
 ```bash
-cd fire-messenger
+$ cd fire-messenger
 ```
 3. Execute the bash script `setup.sh`
 ```bash
-./setup.sh
+$ ./setup.sh
 ```
 4. The packaged extensions will be located on the `fire-messenger/build/` directory.
 

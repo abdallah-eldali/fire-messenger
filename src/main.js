@@ -419,6 +419,9 @@ browser.runtime.onMessage.addListener((msg, sender) => {
   }
 });
 
+console.log("Checking if we should continue the deletion");
 if (localStorage.getItem(continueKey)) {
+  console.log("Continuing deletion");
   removeHandler();
 }
+console.log("No continuation");

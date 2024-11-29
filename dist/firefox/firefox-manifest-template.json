@@ -1,14 +1,17 @@
 {
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "fire-messenger@abdallah-eldali.github.io",
-			"strict_min_version": "132.0.2"
-		}
-	},
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fire-messenger@abdallah-eldali.github.io",
+      "strict_min_version": "132.0.2"
+    }
+  },
 
-	"action": {
-		"default_icon": "icon.png"
-	},
-
-	"icons": { "555": "icon.png" }
+  "icons": { 
+    "128": "icons/icon.svg",
+    "16": "icons/icon.svg",
+    "32": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "64": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  }
 }

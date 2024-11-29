@@ -14,10 +14,8 @@
 
   "action": {
     "default_popup": "popup.html",
-		"default_icon": "icon.png"
-	},
-
-	"icons": { "555": "icon.png" },
+    "default_icon": "icons/icon.png"
+  },
 
   "permissions": ["activeTab", "storage"],
 

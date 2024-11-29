@@ -11,7 +11,11 @@ package_extension() {
     options='--exclude *polyfill*.js'
   fi
 
-  zip -j -FS ./build/$1_$name.zip ./src/* $options
+  if [ $1 = 'chrome' ]; then
+    options='--exclude *.svg'
+  fi
+
+  (cd ./src/ ; zip -r -FS ../build/$1_$name.zip * $options ; cd -)
 }
 
 mkdir -p ./build

@@ -3,5 +3,8 @@
     "matches": ["http://*.messenger.com/*", "https://*.messenger.com/*"],
     "js": ["browser-polyfill.js", "main.js"],
     "run_at": "document_end"
-  }]
+  }],
+  "icons": {
+    "555": "icons/icon.png"
+  }
 }

@@ -18,8 +18,7 @@ PARTNER_CHAT_QUERY = '.x1cy8zhl.x78zum5.xdt5ytf.x193iq5w.x1n2onr6.x1kxipp6';
 CHATS_QUERY = `.html-div.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x78zum5.xh8yej3:has(${MY_ROW_QUERY},${PARTNER_CHAT_QUERY})`;
 
 // In case a user has none of their own messages on screen and only unsent messages, this serves to pick up the scroll parent
-UNSENT_MESSAGE_QUERY = `.html-div.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1h91t0o.xkh2ocl.x78zum5.xdt5ytf.x13a6bvl.x193iq5w.x1c4vz4f.x1eb86dx:has(.html-div.x11i5rnm.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1k4tb9n.x12nagc.x1gslohp.x1ks1olk.xyk4ms5)`;
-
+UNSENT_MESSAGE_QUERY = `.html-div.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1h91t0o.xkh2ocl.x78zum5.xdt5ytf.x13a6bvl.x193iq5w.x1c4vz4f.x1eb86dx:has(.html-div.x11i5rnm.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1k4tb9n.x12nagc.x1gslohp.x1ks1olk)`;
 // Selects all chats (Unsent messages, Partner's and User's)
 ALL_CHAT_QUERY = `${CHATS_QUERY},${UNSENT_MESSAGE_QUERY}`;
 

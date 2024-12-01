@@ -12,7 +12,7 @@ Fire Messenger (similar to [Shoot the Messenger](https://github.com/theahura/sho
 ## Attribution
 
 ### Fire Messenger Icon
-The [Fire Messenger icon](./src/icon.png) was created using and modifying the emojis designed by [OpenMoji](https://openmoji.org/) – the open-source emoji and icon project. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/#)
+The [Fire Messenger icon](./src/icons/icon.png) was created using and modifying the emojis designed by [OpenMoji](https://openmoji.org/) – the open-source emoji and icon project. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/#)
 
 The Fire Messenger project, including the icon, will be licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) as [GPLv3 is a compatible license with CC BY-SA 4.0](https://creativecommons.org/share-your-work/licensing-considerations/compatible-licenses/). Following [Section 3(b)(1)](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en#s3b1) of the CC BY-SA 4.0 License by applying a BY-SA Compatible License (in this case, GPLv3).
 
@@ -38,9 +38,9 @@ Currently, the only available option for installation is a manual installation.
 
 #### Firefox Extended Support Release (ESR), Firefox Developer Edition and Nightly versions of Firefox
 
-1. Make sure to set `xpinstall.signatures.required` to `false` in [`about:config`](about:config), for more information, see [here](https://support.mozilla.org/en-US/kb/add-on-signing-in-firefox).
+1. Make sure to set `xpinstall.signatures.required` to `false` in `about:config` (enter `about:config` in Firefox's address bar), for more information, see [here](https://support.mozilla.org/en-US/kb/add-on-signing-in-firefox).
 2. Download `firefox_fire-messenger.zip` (from the [latest release](https://github.com/abdallah-eldali/fire-messenger/releases)).
-3. Open "*Extensions*" (you can find by going to [Addons Page](about:addons) and clicking "*Extensions*" located in the left pane).
+3. Open "*Extensions*" (you can find by going to Addons Page (enter `about:addons` in Firefox's address bar) and clicking "*Extensions*" located in the left pane).
 4. Click on the Gear Icon (⚙️) and select "*Install Add-on From File...*".
 5. Locate the recently downloaded `firefox_fire-messenger.zip` file, select it, and click "*Open*".
 6. Firefox will warn about the extension being potentially malicious as it's not signed by Mozilla. Click "*Add*".
@@ -52,7 +52,7 @@ Since the Standard Firefox version ignores the `xpinstall.signatures.required` f
 **NOTE:** This will load the extension **temporarily**, meaning, that the extension will be removed when Firefox is closed and you will have to load it again.
 
 1. Download `firefox_fire-messenger.zip` (from the [latest release](https://github.com/abdallah-eldali/fire-messenger/releases)).
-2. Go to [Firefox Debugging Page](about:debugging#/runtime/this-firefox).
+2. Go to Firefox Debugging Page (enter `about:debugging#/runtime/this-firefox` in Firefox's address bar).
 3. Click the button "*Load Temporary Add-on...*".
 4. Locate the recently downloaded `firefox_fire-messenger.zip` file, select it, and click "*Open*".
 

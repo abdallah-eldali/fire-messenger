@@ -2,7 +2,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "fire-messenger@abdallah-eldali.github.io",
-      "strict_min_version": "132.0.2"
+      "strict_min_version": "132.0"
     }
   },
 

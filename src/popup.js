@@ -2,7 +2,6 @@ const removeMessagesButton = document.getElementById('RemoveMessages');
 const stopButton = document.getElementById('Stop');
 const delayInput = document.getElementById('Delay');
 const messageDiv = document.getElementById('Message');
-const lastClearedDiv = document.getElementById('LastCleared');
 
 function disablePopupHtml() {
   Array.from(document.getElementsByTagName('input'))
@@ -64,14 +63,3 @@ delayInput.addEventListener('input', (e) => {
               })
               .catch(onError);
 });
-
-browser.tabs.query({ active: true, currentWindow: true })
-            .then((tabs) => browser.storage.local.get([tabs[0].url]))
-            .then((result) => {
-              if (!result || Object.keys(result).length === 0) return;
-              console.log('Found storage for url: ', result);
-              if ('lastCleared' in result[tabs[0].url]) {
-                lastClearedDiv.textContent = `Last Cleared: ${result[tabs[0].url]['lastCleared']}`;
-              }
-            })
-            .catch(onError);

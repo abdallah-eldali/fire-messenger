@@ -52,7 +52,6 @@ const DEBUG_MODE = false; // When set, does not actually remove messages.
 const currentURL =
   location.protocol + '//' + location.host + location.pathname;
 const continueKey = 'fire-messenger-continue' + currentURL;
-const lastClearedKey = 'fire-messenger-last-cleared' + currentURL;
 const delayKey = 'fire-messenger-delay' + currentURL;
 
 let scrollerCache = null;
@@ -339,7 +338,6 @@ async function removeHandler() {
 
   if (status === STATUS.COMPLETE) {
     localStorage.removeItem(continueKey);
-    localStorage.setItem(lastClearedKey, new Date().toString());
     console.log('Success!');
     alert('Successfully cleared all messages!');
     return null;

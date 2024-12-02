@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Fire Messenger",
-  "description": "This extension sequentially unsends all messenges in a messenger chain.",
-  "version": "8.0.0",
+  "description": "This extension sequentially unsends all messages in a messenger chain.",
+  "version": "1.0.0",
 
   "content_scripts": [
     {

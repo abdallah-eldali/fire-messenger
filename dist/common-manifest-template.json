@@ -3,6 +3,8 @@
   "name": "Fire Messenger",
   "description": "This extension sequentially unsends all messages in a messenger chain.",
   "version": "1.0.0",
+  "author": "abdallah-eldali",
+  "homepage_url": "https://github.com/abdallah-eldali/fire-messenger",
 
   "content_scripts": [
     {

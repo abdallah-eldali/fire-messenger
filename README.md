@@ -3,6 +3,14 @@
 Fire Messenger
 </h1>
 
+# Available:
+<a href="https://addons.mozilla.org/en-US/firefox/addon/fire-messenger/"> 
+<img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png">
+</a>
+
+
+***
+
 Fire Messenger is a fork of the Chrome extension [Shoot the Messenger](https://github.com/theahura/shoot-the-messenger) with bug fixes, added features and Firefox integration!
 
 # About
@@ -22,7 +30,9 @@ The Fire Messenger extension uses the [WebExtension `browser` API Polyfill](http
 
 # Installing
 
-Currently, the only available option for installation is a manual installation.
+Currently, the only available option for installation on Chrome browsers is a manual installation. For Firefox installation through the [AMO](https://addons.mozilla.org/en-US/firefox/) please click [here](https://addons.mozilla.org/en-US/firefox/addon/fire-messenger/) and install it. 
+
+For manual installation of nightly versions please check below. 
 
 ## Manual
 
@@ -87,5 +97,12 @@ If you encounter any issues, please create a ticket [here](https://github.com/ab
 # Roadmap
 
 - [ ] Implement a CI/CD pipeline using GitHub Actions to automate the creation of extension packages in the release page instead of doing it manually
-- [ ] Get the Firefox version of the extension signed by Mozilla and published to the [AMO](addons.mozilla.org)
+- [x] Get the Firefox version of the extension signed by Mozilla and published to the [AMO](addons.mozilla.org)
 - [ ] Possibility of using GitHub Actions to check for errors and warnings on PR using web-ext lint
+
+# Special Thanks
+- [Shoot the Messenger](https://github.com/theahura/shoot-the-messenger) - For creating an amazing extension and the basis of this extension
+- [uBlock Origin](https://github.com/gorhill/uBlock) - For showing how to create a high-quality cross-platform extension
+- [OpenMoji](http://openmoji.org/) - For the amazing emojis used for the project's icon
+- [WebExtension Polyfill](https://github.com/mozilla/webextension-polyfill) - For allowing porting to Chrome without major changes
+- [Mozilla's Developers Team](https://developer.mozilla.org/en-US/) - For amazing documentation

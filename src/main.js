@@ -91,7 +91,7 @@ function getScroller() {
 
   let el;
   try {
-    el = document.querySelector(ALL_CHAT_QUERY);
+    el = document.waitForQuerySelector(ALL_CHAT_QUERY, 1000);
     while (!('scrollTop' in el) || el.scrollTop === 0) {
       console.log('Traversing tree to find scroller...', el);
       el = el.parentElement;
@@ -121,10 +121,8 @@ async function removeReactionFromMessage(chat_msg) {
   }
   console.log('Clicking on reaction button: ', reactionButton);
   reactionButton.click();
-  await sleep(500);
-
   // Check if the reaction window has opened
-  const windowPopup = document.querySelector(`.x1yr2tfi`);
+  const windowPopup = await document.waitForQuerySelector(`.x1yr2tfi`, 500);
   // Check if the title tag within the popup window is of "Message reactions"
   if (windowPopup?.querySelector('.x1lkfr7t').innerText !== 'Message reactions') {
     console.log("Reaction window couldn't open");
@@ -143,13 +141,11 @@ async function removeReactionFromMessage(chat_msg) {
 
          console.log('Removing reaction from message: ', el);
          el.click();
-         await sleep(150);
        });
 
   // Close reaction window
   console.log('Closing reaction window');
   windowPopup.querySelector(`[aria-label="Close"][role="button"]`).click();
-  await sleep(1000);
   return true;
 }
 
@@ -212,6 +208,7 @@ async function unsendAllVisibleMessages() {
 
     // Keep current task in view, as to not confuse users, thinking it's not working anymore.
     el.scrollIntoView();
+    // NOTE: Maybe this sleep here is unnecessary...
     await sleep(100);
 
     // Remove reactions from chat message if possible
@@ -223,10 +220,9 @@ async function unsendAllVisibleMessages() {
     // Trigger on hover.
     console.log('Triggering hover on: ', el);
     el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-    await sleep(150);
 
     // Get the more button.
-    const moreButton = el.parentElement.parentElement.querySelector(MORE_BUTTONS_QUERY);
+    const moreButton = await el.parentElement.parentElement.waitForQuerySelector(MORE_BUTTONS_QUERY, 250);
     if (!moreButton) {
       console.log('No moreButton found! Skipping holder: ', el);
       continue;
@@ -240,8 +236,7 @@ async function unsendAllVisibleMessages() {
     clickCountPerElement.set(el, (clickCountPerElement.get(el) ?? 0) + 1);
 
     // Hit the remove button to get the popup.
-    await sleep(500);
-    const removeButton = document.querySelector(REMOVE_BUTTON_QUERY);
+    const removeButton = await document.waitForQuerySelector(REMOVE_BUTTON_QUERY, 500);
     if (!removeButton) {
       console.log('No removeButton found! Skipping holder: ', el);
       continue;
@@ -251,9 +246,8 @@ async function unsendAllVisibleMessages() {
     removeButton.click();
 
     // Hit unsend on the popup. If we are in debug mode, just log the popup.
-    await sleep(1000);
-    const unsendButton = document.querySelector(REMOVE_CONFIRMATION_QUERY);
-    const cancelButton = document.querySelector(CANCEL_CONFIRMATION_QUERY);
+    const unsendButton = await document.waitForQuerySelector(REMOVE_CONFIRMATION_QUERY, 1000);
+    const cancelButton = await document.waitForQuerySelector(CANCEL_CONFIRMATION_QUERY, 1000);
     if (DEBUG_MODE) {
       console.log('Skipping unsend because we are in debug mode.', unsendButton);
       cancelButton.click();
@@ -264,7 +258,6 @@ async function unsendAllVisibleMessages() {
       console.log('Clicking unsend button: ', unsendButton);
       unsendButton.click();
     }
-    await sleep(1800);
   }
   console.log('Removed all holders.');
 
@@ -282,13 +275,7 @@ async function unsendAllVisibleMessages() {
   // waits 5 times (10s).
   let loader = null;
   scroller_.scrollTop = 0;
-
-  for (let i = 0; i < 5; ++i) {
-    console.log('Waiting for loading messages to populate...', loader);
-    await sleep(2000);
-    loader = document.querySelector(LOADING_QUERY);
-    if (!loader) break;
-  }
+  loader = document.waitForQuerySelector(LOADING_QUERY, 10000);
 
   return { status: STATUS.CONTINUE, data: DELAY * 1000 };
 }

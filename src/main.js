@@ -63,6 +63,29 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, randomizedSleep));
 }
 
+Node.prototype.waitForQuerySelector = function(query, timeout) {
+  return new Promise((resolve, reject) => {
+    let time_interval = 100;
+    let intervalId = setInterval(() => {
+      let element = this.querySelector(query);
+      if (element || timeout <= 0) {
+        clearInterval(intervalId);
+        resolve(element); //will return element or null
+      }
+      //if (element) {
+      //  clearInterval(intervalId);
+      //  resolve(element);
+      //}
+      //if (timeout <= 0) {
+      //  console.log("Timeout");
+      //  clearInterval(intervalId);
+      //  reject("Timeout");
+      //}
+      timeout -= time_interval;
+    }, time_interval);
+  });
+}
+
 function getScroller() {
   if (scrollerCache) return scrollerCache;
 

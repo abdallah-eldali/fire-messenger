@@ -46,30 +46,21 @@ const STATUS = {
 };
 
 let DELAY = 5;
+let STOP = false;
 const RUNNER_COUNT = 10;
 const DEBUG_MODE = false; // When set, does not actually remove messages.
-
-const currentURL =
-  location.protocol + '//' + location.host + location.pathname;
-const continueKey = 'fire-messenger-continue' + currentURL;
-const delayKey = 'fire-messenger-delay' + currentURL;
 
 let scrollerCache = null;
 const clickCountPerElement = new Map();
 
 // Helper functions ----------------------------------------------------------
-function getRandom(min, max) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 function sleep(ms) {
+  function getRandom(min, max) {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
   let randomizedSleep = getRandom(ms, ms * 1.33);
   return new Promise((resolve) => setTimeout(resolve, randomizedSleep));
-}
-
-function reload() {
-  window.location = window.location.pathname;
 }
 
 function getScroller() {
@@ -191,8 +182,12 @@ async function unsendAllVisibleMessages() {
   // Reverse list so it steps through messages from bottom and not a seemingly
   // random position.
   for (el of moreButtonsHolders.slice().reverse()) {
-    // Keep current task in view, as to not confuse users, thinking it's not
-    // working anymore.
+    // Check if we need to stop, if so, return as Complete
+    if (STOP) {
+      return { status: STATUS.COMPLETE };
+    }
+
+    // Keep current task in view, as to not confuse users, thinking it's not working anymore.
     el.scrollIntoView();
     await sleep(100);
 
@@ -275,22 +270,15 @@ async function unsendAllVisibleMessages() {
   return { status: STATUS.CONTINUE, data: DELAY * 1000 };
 }
 
-async function deleteAllRunner(count) {
-  console.log('Starting delete all runner removal for N iterations: ', count);
-  for (let i = 0; i < count; ++i) {
-    console.log('Running count:', i);
-    const sleepTime = await unsendAllVisibleMessages();
-    if (sleepTime.status === STATUS.CONTINUE) {
-      console.log('Sleeping to avoid rate limits: ', sleepTime.data / 1000);
-      await sleep(sleepTime.data);
-    } else if (sleepTime.status === STATUS.COMPLETE) {
-      return STATUS.COMPLETE;
-    } else {
-      return STATUS.ERROR;
-    }
+async function deleteAllRunner() {
+  console.log('Starting delete all runner removal');
+  let sleepTime = await unsendAllVisibleMessages();
+  while (sleepTime.status === STATUS.CONTINUE) {
+    console.log(`Sleeping to avoid rate limits: ${sleepTime.data / 1000}`);
+    await sleep(sleepTime.data);
+    sleepTime = await unsendAllVisibleMessages();
   }
-  console.log('Completed run.');
-  return STATUS.CONTINUE;
+  return sleeptime.status;
 }
 
 function hijackLog() {
@@ -330,23 +318,16 @@ function hijackLog() {
 
 async function removeHandler() {
   hijackLog();
-  DELAY = localStorage.getItem(delayKey) || DELAY;
   console.log('Sleeping to allow the page to load fully...');
   await sleep(10000); // give the page a bit to fully load.
 
-  const status = await deleteAllRunner(RUNNER_COUNT);
+  const status = await deleteAllRunner();
 
   if (status === STATUS.COMPLETE) {
-    localStorage.removeItem(continueKey);
     console.log('Success!');
     alert('Successfully cleared all messages!');
     return null;
-  } else if (status === STATUS.CONTINUE) {
-    console.log('Completed runner iteration but did not finish removal.');
-    localStorage.setItem(continueKey, true);
-    return reload();
   }
-
   console.log('Failed to complete removal.');
   alert('ERROR: something went wrong. Failed to complete removal.');
 }
@@ -403,22 +384,15 @@ browser.runtime.onMessage.addListener((msg, sender) => {
       'Removal will nuke your messages and will prevent you from seeing the messages of other people in this chat. We HIGHLY recommend backing up your messages first. Continue?',
     );
     if (doRemove) {
+      console.log(`Setting delay to ${msg.data} seconds.`);
+      DELAY = msg.data || DELAY;
+      STOP = false;
       removeHandler();
     }
   } else if (msg.action === 'STOP') {
-    localStorage.removeItem(continueKey);
-    reload();
-  } else if (msg.action === 'UPDATE_DELAY') {
-    console.log('Setting delay to', msg.data || DELAY, 'seconds');
-    localStorage.setItem(delayKey, msg.data);
+    console.log(`Received Stopped signal`);
+    STOP = true;
   } else {
     console.log('Unknown action.');
   }
 });
-
-console.log("Checking if we should continue the deletion");
-if (localStorage.getItem(continueKey)) {
-  console.log("Continuing deletion");
-  removeHandler();
-}
-console.log("No continuation");

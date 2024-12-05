@@ -52,7 +52,6 @@ const RUNNER_COUNT = 10;
 const DEBUG_MODE = false; // When set, does not actually remove messages.
 
 let scrollerCache = null;
-const clickCountPerElement = new Map();
 
 // Helper functions ----------------------------------------------------------
 function sleep(ms) {
@@ -163,58 +162,14 @@ async function removeReactionFromMessage(chat_msg) {
   return true;
 }
 
-
-async function prepareDOMForRemoval() {
-  const elementsToRemove = [];
-
-  // Add the elements from clickCountPerElement where the count is greater than
-  // 3 to elementsToRemove.
-  for (let [el, count] of clickCountPerElement) {
-    if (count > 3) {
-      console.log('Unable to unsend element: ', el);
-      elementsToRemove.push(el);
-    }
-  }
-
-  // Once we know what to remove, start the loading process for new messages
-  // just in case we lose the scroller.
-  getScroller().scrollTop = 0;
-  await sleep(1000);
-
-  // We cant delete all of the elements because react will crash. Keep the
-  // first one.
-  elementsToRemove.shift();
-  elementsToRemove.reverse();
-  console.log('Removing bad rows from dom: ', elementsToRemove);
-  for (let badEl of elementsToRemove) {
-    await sleep(100);
-    let el = badEl;
-    try {
-      while (el.getAttribute('role') !== 'row') el = el.parentElement;
-      el.remove();
-    } catch (err) {
-      console.log('Skipping row: could not find the row attribute.');
-    }
-  }
-}
-
-async function getAllMessages() {
-  // Get all ... buttons that let you select 'more' for all messages you sent.
-  const elementsToUnsend = [...document.querySelectorAll(ALL_CHAT_QUERY)];
-  console.log('Got elements to unsend: ', elementsToUnsend);
+function getMostRecentMessage() {
+  const elementsToUnsend = Array.from(document.querySelectorAll(ALL_CHAT_QUERY)).at(-1);
+  console.log('Got most recent message element to unsend: ', elementsToUnsend);
   return elementsToUnsend;
 }
 
 async function unsendAllVisibleMessages() {
-  // Prepare the DOM. Get the elements we can remove. Load the next set. Hide
-  // the rest.
-  await prepareDOMForRemoval();
-  const moreButtonsHolders = await getAllMessages();
-  console.log('Found hidden menu holders: ', moreButtonsHolders);
-
-  // Reverse list so it steps through messages from bottom and not a seemingly
-  // random position.
-  for (el of moreButtonsHolders.slice().reverse()) {
+  while (el = getMostRecentMessage()) {
     // Check if we need to stop, if so, return as Complete
     if (STOP) {
       return { status: STATUS.STOPPED };
@@ -243,11 +198,6 @@ async function unsendAllVisibleMessages() {
     }
     console.log('Clicking more button: ', moreButton);
     moreButton.click();
-
-    // Update the click count for the button. This is used to skip elements
-    // that refuse to be unsent (see: prepareDOMForRemoval -- we remove these
-    // DOM elements there).
-    clickCountPerElement.set(el, (clickCountPerElement.get(el) ?? 0) + 1);
 
     // Hit the remove button to get the popup.
     const removeButton = await document.waitForQuerySelector(REMOVE_BUTTON_QUERY, 500);

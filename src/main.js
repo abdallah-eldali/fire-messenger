@@ -43,6 +43,7 @@ const STATUS = {
   CONTINUE: 'continue',
   ERROR: 'error',
   COMPLETE: 'complete',
+  STOPPED: 'stopped'
 };
 
 let DELAY = 5;
@@ -91,7 +92,7 @@ function getScroller() {
 
   let el;
   try {
-    el = document.waitForQuerySelector(ALL_CHAT_QUERY, 1000);
+    el = document.querySelector(ALL_CHAT_QUERY);
     while (!('scrollTop' in el) || el.scrollTop === 0) {
       console.log('Traversing tree to find scroller...', el);
       el = el.parentElement;
@@ -121,14 +122,16 @@ async function removeReactionFromMessage(chat_msg) {
   }
   console.log('Clicking on reaction button: ', reactionButton);
   reactionButton.click();
+  await sleep(500); // NOTE: This sleep is important, DO NOT user waitForQuerySelector alone to get the window popup as it will return the loading popup window instead of the already loaded one
   // Check if the reaction window has opened
-  const windowPopup = await document.waitForQuerySelector(`.x1yr2tfi`, 500);
+  const windowPopup = await document.waitForQuerySelector(`.x1yr2tfi`, 3000);
   // Check if the title tag within the popup window is of "Message reactions"
   if (windowPopup?.querySelector('.x1lkfr7t').innerText !== 'Message reactions') {
     console.log("Reaction window couldn't open");
     return false;
   }
-
+  
+  let userReacted = false;
   // Find if the user reacted to the message
   // NOTE: I'm not sure if a user can react to a message more than once, if not, then this array will always only have one element at most
   Array.from(windowPopup.querySelectorAll(`div.xu06os2:nth-child(2) > span`))
@@ -141,11 +144,22 @@ async function removeReactionFromMessage(chat_msg) {
 
          console.log('Removing reaction from message: ', el);
          el.click();
+         userReacted = true;
        });
 
   // Close reaction window
   console.log('Closing reaction window');
   windowPopup.querySelector(`[aria-label="Close"][role="button"]`).click();
+  await sleep(500);
+  if (userReacted) {
+    if (!chat_msg.parentElement.querySelector(`[aria-label*="see who reacted to this"][role="button"]`)) {
+      console.log(`Reaction was successfully removed`);
+      return true;
+    } else {
+      console.log(`Reaction wasn't successfully removed`);
+      return false;
+    }
+  }
   return true;
 }
 
@@ -194,7 +208,7 @@ async function getAllMessages() {
 async function unsendAllVisibleMessages() {
   // Prepare the DOM. Get the elements we can remove. Load the next set. Hide
   // the rest.
-  prepareDOMForRemoval();
+  await prepareDOMForRemoval();
   const moreButtonsHolders = await getAllMessages();
   console.log('Found hidden menu holders: ', moreButtonsHolders);
 
@@ -203,7 +217,7 @@ async function unsendAllVisibleMessages() {
   for (el of moreButtonsHolders.slice().reverse()) {
     // Check if we need to stop, if so, return as Complete
     if (STOP) {
-      return { status: STATUS.COMPLETE };
+      return { status: STATUS.STOPPED };
     }
 
     // Keep current task in view, as to not confuse users, thinking it's not working anymore.
@@ -258,13 +272,14 @@ async function unsendAllVisibleMessages() {
       console.log('Clicking unsend button: ', unsendButton);
       unsendButton.click();
     }
+    await sleep(1000);
   }
   console.log('Removed all holders.');
 
   // Now see if we need to scroll up.
   const scroller_ = getScroller();
-  const topOfChainText = document.querySelectorAll(TOP_OF_CHAIN_QUERY);
-  await sleep(2000);
+  const topOfChainText = document.querySelector(TOP_OF_CHAIN_QUERY);
+  //await sleep(2000); FIXME: Is this sleep necessary?
   if (!scroller_ || scroller_.scrollTop === 0) {
     console.log('Reached top of chain: ', topOfChainText);
     return { status: STATUS.COMPLETE };
@@ -272,10 +287,15 @@ async function unsendAllVisibleMessages() {
 
   // Scroll up. Wait for the loader.
   // Were done loading when the loading animation is gone, or when the loop
-  // waits 5 times (10s).
+  // waits 10 times (10s).
   let loader = null;
   scroller_.scrollTop = 0;
-  loader = document.waitForQuerySelector(LOADING_QUERY, 10000);
+  for (let i = 0; i < 10; ++i) {
+    console.log('Waiting for loading messages to populate...', loader);
+    await sleep(1000);
+    loader = document.querySelector(LOADING_QUERY);
+    if (!loader) break;
+  }
 
   return { status: STATUS.CONTINUE, data: DELAY * 1000 };
 }
@@ -288,7 +308,7 @@ async function deleteAllRunner() {
     await sleep(sleepTime.data);
     sleepTime = await unsendAllVisibleMessages();
   }
-  return sleeptime.status;
+  return sleepTime.status;
 }
 
 function hijackLog() {
@@ -337,6 +357,11 @@ async function removeHandler() {
     console.log('Success!');
     alert('Successfully cleared all messages!');
     return null;
+  }
+  if (status === STATUS.STOPPED) {
+    console.log('Deleting process was stopped');
+    alert('Deleting process was stopped');
+    return null
   }
   console.log('Failed to complete removal.');
   alert('ERROR: something went wrong. Failed to complete removal.');

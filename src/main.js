@@ -266,7 +266,6 @@ function hijackLog() {
   // system is thinking about.
   console.log('Adding log to screen');
   const log = document.createElement('div');
-  log.id = 'log';
   log.style.position = 'fixed';
   log.style.bottom = '0';
   log.style.left = '0';
@@ -293,7 +292,6 @@ function hijackLog() {
   console.log(
     'To see more complete logs, hit f12 or open the developer console.',
   );
-  return log;
 }
 
 async function removeHandler() {

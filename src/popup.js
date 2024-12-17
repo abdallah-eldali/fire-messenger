@@ -27,11 +27,6 @@ browser.tabs.query({active: true, currentWindow: true})
             .then((tabs) => {
               if (!messengers.some((m) => tabs[0].url.startsWith(m))){
                 disablePopupHtml();
-              } else {
-                browser.tabs.sendMessage(tabs[0].id, { 
-                  action: 'UPDATE_DELAY',
-                  data: delayInput.value
-                });
               }
             })
             .catch(onError);
@@ -40,7 +35,11 @@ browser.tabs.query({active: true, currentWindow: true})
 removeMessagesButton.addEventListener('click', () => {
   browser.tabs.query({ active: true, currentWindow: true})
               .then((tabs) => {
-                browser.tabs.sendMessage(tabs[0].id, {action: 'REMOVE'}); 
+                const message = {
+                  action: 'REMOVE',
+                  data: delayInput.value
+                };
+                browser.tabs.sendMessage(tabs[0].id, message);
               })
               .catch(onError);
 });
@@ -48,18 +47,7 @@ removeMessagesButton.addEventListener('click', () => {
 stopButton.addEventListener('click', () => {
   browser.tabs.query({ active: true, currentWindow: true})
               .then((tabs) => {
-                browser.tabs.sendMessage(tabs[0].id, {action: 'STOP'}); 
-              })
-              .catch(onError);
-});
-
-delayInput.addEventListener('input', (e) => {
-  browser.tabs.query({ active: true, currentWindow: true})
-              .then((tabs) => {
-                browser.tabs.sendMessage(tabs[0].id, { 
-                  action: 'UPDATE_DELAY',
-                  data: e.target.value
-                });
+                browser.tabs.sendMessage(tabs[0].id, {action: 'STOP'});
               })
               .catch(onError);
 });

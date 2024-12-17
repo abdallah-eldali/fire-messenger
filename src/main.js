@@ -49,11 +49,6 @@ let DELAY = 5;
 const RUNNER_COUNT = 10;
 const DEBUG_MODE = false; // When set, does not actually remove messages.
 
-const currentURL =
-  location.protocol + '//' + location.host + location.pathname;
-const continueKey = 'fire-messenger-continue' + currentURL;
-const delayKey = 'fire-messenger-delay' + currentURL;
-
 let scrollerCache = null;
 const clickCountPerElement = new Map();
 

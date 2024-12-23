@@ -58,11 +58,11 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, randomizedSleep));
 }
 
-Node.prototype.waitForQuerySelector = function(query, timeout) {
+Node.prototype.waitForQuerySelector = function(query, timeout, matchInnerText=".*") {
   return new Promise((resolve, reject) => {
     const time_interval = 100;
     let intervalId = setInterval(() => {
-      let element = this.querySelector(query);
+      let element = Array.from(this.querySelectorAll(query)).find((el) => el.innerText?.match(matchInnerText));
       if (element || timeout <= 0) {
         clearInterval(intervalId);
         resolve(element); //will return element or null
@@ -222,8 +222,8 @@ async function unsendMessage(chat_msg) {
 
   //await sleep(500);
   // Hit unsend on the popup. If we are in debug mode, just log the popup.
-  const unsendButton = await document.waitForQuerySelector(REMOVE_CONFIRMATION_QUERY, 5000);
-  const cancelButton = await document.waitForQuerySelector(CANCEL_CONFIRMATION_QUERY, 5000);
+  const unsendButton = await document.waitForQuerySelector(REMOVE_CONFIRMATION_QUERY, 5000, "Remove");
+  const cancelButton = await document.waitForQuerySelector(CANCEL_CONFIRMATION_QUERY, 5000, "Cancel");
   // This means the window asking to unsend the messages isn't open
   if (!unsendButton && !cancelButton) {
     console.log("No unsendButton and cancelButton! Unsending window might not been opened. Skipping holder: ", chat_msg);

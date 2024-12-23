@@ -20,7 +20,9 @@ function onError(error) {
 // Make sure the user is using messenger.com.
 const messengers = [
   'https://www.messenger.com',
-  'https://messenger.com/'
+  'https://messenger.com',
+  'https://facebook.com/messages',
+  'https://www.facebook.com/messages'
 ];
 
 browser.tabs.query({active: true, currentWindow: true})

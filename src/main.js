@@ -82,7 +82,7 @@ Node.prototype.waitForQuerySelector = function(query, timeout, matchInnerText=".
 }
 
 // Constantly polls for the Node to check if it's connected to the DOM until timeout in milliseconds
-Node.prototype.waitForDisconnect = function(timeout) {
+Node.prototype.waitForDisconnectWithTimeout = function(timeout) {
   return new Promise((resolve, reject) => {
     const time_interval = 100;
     let intervalId = setInterval(() => {
@@ -148,39 +148,41 @@ async function removeReactionFromMessage(chat_msg) {
   // Check if the reaction window has opened
   const windowPopup = await document.waitForQuerySelector(".x1yr2tfi", 3000);
   // Check if the title tag within the popup window is of "Message reactions"
-  if (windowPopup?.querySelector(".x1lkfr7t")?.innerText !== "Message reactions") {
+  if (windowPopup?.querySelector(".x1lliihq")?.innerText !== "Message reactions") {
     console.log("Reaction window couldn't open");
     return false;
   }
 
-  let userReacted = false;
   // Find if the user reacted to the message
-  // NOTE: I'm not sure if a user can react to a message more than once, if not, then this array will always only have one element at most
-  Array.from(windowPopup.querySelectorAll(`div.xu06os2:nth-child(2) > span`))
-       .filter((el) => el.innerText === "Click to remove")
-       .forEach(async (el) => {
-         if (DEBUG_MODE) {
-           console.log("Skipping removal of reaction we are in debug mode. ", el);
-           return; // counts as a 'continue' keyword
-         }
-
-         console.log("Removing reaction from message: ", el);
-         el.click();
-         //await sleep(500);
-         userReacted = true;
-       });
-
+  let userReactionButton = Array.from(windowPopup.querySelectorAll(`div.xu06os2:nth-child(2) > span`))
+                                .find((el) => el.innerText === "Click to remove");
+  if (DEBUG_MODE && userReactionButton) {
+    console.debug("Debug Mode: Skipping removal of reaction from message: ", chat_msg, userReactionButton);
+  }
+  else if (userReactionButton) {
+    console.log("Removing reaction from message: ", userReactionButton);
+    userReactionButton.click();
+    userReactionButton.waitForDisconnectWithTimeout(2000);
+  }
   // Close reaction window
   console.log("Closing reaction window");
   //await sleep(500);
   windowPopup.querySelector(`[aria-label="Close"][role="button"]`).click();
-  //await sleep(500);
-  if (!userReacted) return true;
+  await sleep(500); // Sleep for a bit after closing the reactions window to let Messenger update the chat message
 
+  if (!userReactionButton) {
+    console.log("User has no reaction to this chat message: ", chat_msg);
+    return true;
+  }
+
+  // Check if the reaction "bubble" in the corner of the chat message has dissapeared
+  // NOTE: This only works if the user was the only one who reacted to a specific chat message.
+  //       If other members of a group chat reacted to a chat message, then the reaction "bubble" will still appear in the corner of the chat message (indicating the other members reacted to the message)
   if (!chat_msg.parentElement.querySelector(`[aria-label*="see who reacted to this"][role="button"]`)) {
       console.log("Reaction was successfully removed");
       return true;
   }
+
   console.log("Reaction wasn't successfully removed");
   return false;
 }
@@ -244,7 +246,7 @@ async function unsendMessage(chat_msg) {
 
   //await sleep(500);
   // Check if chat_msg was deleted (is it still connected to the DOM?)
-  const isMessageDisconnectedFromDOM = await chat_msg.waitForDisconnect(1000);
+  const isMessageDisconnectedFromDOM = await chat_msg.waitForDisconnectWithTimeout(1000);
   return isMessageDisconnectedFromDOM;
 }
 

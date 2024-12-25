@@ -8,6 +8,8 @@ Fire Messenger
 # Warning ⚠️:
 This extension will remove **ALL** chat messages. Including any messages sent by others in the chat. Please create a backup of your messages before attempting to use this extension. Unsending and removing messages is **PERMANENT**.
 
+Also, please note that there is the possibility that some other users in the chat **MIGHT** be notified of messages being unsent. I'm unaware as to why it happens. If someone has any ideas as to why it happens, then I would greatly appreciate if you could create an [issue ticket](#issue-reporting) here outlining and explaining why it happens so I can see if it's possible to mitigate notifications being sent.
+
 ***
 
 # Available:

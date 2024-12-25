@@ -3,6 +3,13 @@
 Fire Messenger
 </h1>
 
+***
+
+# Warning ⚠️:
+This extension will remove **ALL** chat messages. Including any messages sent by others in the chat. Please create a backup of your messages before attempting to use this extension. Unsending and removing messages is **PERMANENT**.
+
+***
+
 # Available:
 <a href="https://addons.mozilla.org/en-US/firefox/addon/fire-messenger/"> 
 <img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png">

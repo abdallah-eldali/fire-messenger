@@ -2,6 +2,7 @@ const removeMessagesButton = document.getElementById('RemoveMessages');
 const stopButton = document.getElementById('Stop');
 const delayInput = document.getElementById('Delay');
 const messageDiv = document.getElementById('Message');
+const toggleLogCheckbox = document.getElementById("DisplayConsoleToggle");
 
 function disablePopupHtml() {
   Array.from(document.getElementsByTagName('input'))
@@ -39,7 +40,8 @@ removeMessagesButton.addEventListener('click', () => {
               .then((tabs) => {
                 const message = {
                   action: 'REMOVE',
-                  data: delayInput.value
+                  data: delayInput.value,
+                  toggleLog: toggleLogCheckbox.checked
                 };
                 browser.tabs.sendMessage(tabs[0].id, message);
               })

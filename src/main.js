@@ -1,3 +1,4 @@
+(function () {
 // The div at the very top of the message chain. This is the div holding the description
 // of the person your chatting with. Example as follows
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -72,7 +73,7 @@ Node.prototype.waitForQuerySelector = function(query, timeout, matchInnerText=".
       //  resolve(element);
       //}
       //if (timeout <= 0) {
-      //  console.log("Timeout");
+      //  print("Timeout");
       //  clearInterval(intervalId);
       //  reject("Timeout");
       //}
@@ -97,7 +98,7 @@ Node.prototype.waitForDisconnectWithTimeout = function(timeout) {
 
 function getMostRecentMessage() {
   const elementsToUnsend = Array.from(document.querySelectorAll(ALL_CHAT_QUERY)).at(-1);
-  console.log("Got most recent message element to unsend: ", elementsToUnsend);
+  print("Got most recent message element to unsend: ", elementsToUnsend);
   return elementsToUnsend;
 }
 
@@ -108,15 +109,15 @@ function getScroller() {
   try {
     el = getMostRecentMessage();
     while (!("scrollTop" in el) || el.scrollTop === 0) {
-      console.log("Traversing tree to find scroller...", el);
+      print("Traversing tree to find scroller...", el);
       el = el.parentElement;
     }
   } catch (e) {
     alert(
       "Could not find scroller. This normally happens because you do not " +
-        "have enough messages to scroll through. Failing.",
+      "have enough messages to scroll through. Failing.",
     );
-    console.log("Could not find scroller; failing.");
+    print("Could not find scroller; failing.");
     throw new Error("Could not find scroller.");
   }
 
@@ -129,7 +130,7 @@ function getScroller() {
 // Returns true if the user didn't react to the chat or the reaction was removed successfully, false otherwise
 async function removeReactionFromMessage(chat_msg) {
   if (!chat_msg) {
-    console.log(`Chat Message doesn't exist: ${chat_msg}`);
+    print(`Chat Message doesn't exist: ${chat_msg}`);
     return false;
   }
 
@@ -138,18 +139,18 @@ async function removeReactionFromMessage(chat_msg) {
   // Get the reactions from chat message
   const reactionButton = chat_msg.parentElement?.querySelector(`[aria-label*="see who reacted to this"][role="button"]`);
   if (!reactionButton) {
-    console.log("Chat message has no reaction");
+    print("Chat message has no reaction");
     return true;
   }
 
-  console.log("Clicking on reaction button: ", reactionButton);
+  print("Clicking on reaction button: ", reactionButton);
   reactionButton.click();
   await sleep(500); // NOTE: This sleep is important, DO NOT user waitForQuerySelector alone to get the window popup as it will return the loading popup window instead of the already loaded one
   // Check if the reaction window has opened
   const windowPopup = await document.waitForQuerySelector(".x1yr2tfi", 3000);
   // Check if the title tag within the popup window is of "Message reactions"
   if (windowPopup?.querySelector(".x1lliihq")?.innerText !== "Message reactions") {
-    console.log("Reaction window couldn't open");
+    print("Reaction window couldn't open");
     return false;
   }
 
@@ -160,18 +161,18 @@ async function removeReactionFromMessage(chat_msg) {
     console.debug("Debug Mode: Skipping removal of reaction from message: ", chat_msg, userReactionButton);
   }
   else if (userReactionButton) {
-    console.log("Removing reaction from message: ", userReactionButton);
+    print("Removing reaction from message: ", userReactionButton);
     userReactionButton.click();
     userReactionButton.waitForDisconnectWithTimeout(2000);
   }
   // Close reaction window
-  console.log("Closing reaction window");
+  print("Closing reaction window");
   //await sleep(500);
   windowPopup.querySelector(`[aria-label="Close"][role="button"]`).click();
   await sleep(500); // Sleep for a bit after closing the reactions window to let Messenger update the chat message
 
   if (!userReactionButton) {
-    console.log("User has no reaction to this chat message: ", chat_msg);
+    print("User has no reaction to this chat message: ", chat_msg);
     return true;
   }
 
@@ -179,24 +180,24 @@ async function removeReactionFromMessage(chat_msg) {
   // NOTE: This only works if the user was the only one who reacted to a specific chat message.
   //       If other members of a group chat reacted to a chat message, then the reaction "bubble" will still appear in the corner of the chat message (indicating the other members reacted to the message)
   if (!chat_msg.parentElement.querySelector(`[aria-label*="see who reacted to this"][role="button"]`)) {
-      console.log("Reaction was successfully removed");
-      return true;
+    print("Reaction was successfully removed");
+    return true;
   }
 
-  console.log("Reaction wasn't successfully removed");
+  print("Reaction wasn't successfully removed");
   return false;
 }
 
 async function unsendMessage(chat_msg) {
   if (!chat_msg) {
-    console.log("Chat Message doesn't exist: ", chat_msg);
+    print("Chat Message doesn't exist: ", chat_msg);
     return false;
   }
 
   chat_msg.scrollIntoView();
 
   // Trigger the hover over the chat message
-  console.log("Triggering hover on: ", chat_msg);
+  print("Triggering hover on: ", chat_msg);
   chat_msg.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
 
   //await sleep(500);
@@ -204,22 +205,22 @@ async function unsendMessage(chat_msg) {
   // Get the more button of the message (the 3 elipses besides a chat message)
   const moreButton = await chat_msg.parentElement?.parentElement?.waitForQuerySelector(MORE_BUTTONS_QUERY, 5000);
   if (!moreButton) {
-    console.log("No More Button found! Skipping holder: ", chat_msg);
+    print("No More Button found! Skipping holder: ", chat_msg);
     return false;
   }
 
-  console.log("Clicking more button: ", moreButton);
+  print("Clicking more button: ", moreButton);
   moreButton.click();
 
   //await sleep(500);
   // Hit the remove button to tget the popup
   const removeButton = await document.waitForQuerySelector(REMOVE_BUTTON_QUERY, 5000);
   if (!removeButton) {
-    console.log("No Remove Button found! Skipping holder: ", chat_msg);
+    print("No Remove Button found! Skipping holder: ", chat_msg);
     return false;
   }
 
-  console.log("Clicking remove button: ", removeButton);
+  print("Clicking remove button: ", removeButton);
   removeButton.click();
 
   //await sleep(500);
@@ -228,19 +229,19 @@ async function unsendMessage(chat_msg) {
   const cancelButton = await document.waitForQuerySelector(CANCEL_CONFIRMATION_QUERY, 5000, "Cancel");
   // This means the window asking to unsend the messages isn't open
   if (!unsendButton && !cancelButton) {
-    console.log("No unsendButton and cancelButton! Unsending window might not been opened. Skipping holder: ", chat_msg);
+    print("No unsendButton and cancelButton! Unsending window might not been opened. Skipping holder: ", chat_msg);
     return false;
   }
   if (DEBUG_MODE) {
-    console.log("Skipping unsend because we are in debug mode: ", unsendButton);
+    print("Skipping unsend because we are in debug mode: ", unsendButton);
     cancelButton.click();
     return true;
   } else if (!unsendButton) {
-    console.log("No unsendButton found! Skipping holder: ", chat_msg);
+    print("No unsendButton found! Skipping holder: ", chat_msg);
     cancelButton.click();
     return false;
   } else {
-    console.log("Clicking unsend button: ", unsendButton);
+    print("Clicking unsend button: ", unsendButton);
     unsendButton.click();
   }
 
@@ -254,22 +255,22 @@ function removeElementFromDOM(chat_msg) {
   try {
     chat_msg.closest(`div.x78zum5.xdt5ytf.x1iyjqo2.x2lah0s.xl56j7k.x121v3j4 > div`).remove();
   } catch (err) {
-    console.log("Couldn't remove chat message from DOM. Thowing error");
+    print("Couldn't remove chat message from DOM. Thowing error");
     throw err;
   }
 }
 
 function isMessageACall(chat_msg) {
   if (!chat_msg) {
-    console.log("Chat message doesn't exist: ", chat_msg);
+    print("Chat message doesn't exist: ", chat_msg);
     return false;
   }
 
   if (chat_msg.querySelector(`[aria-label*="call"][role="button"]`)) {
-    console.log("Chat message is a call: ", chat_msg);
+    print("Chat message is a call: ", chat_msg);
     return true;
   } else {
-    console.log("Chat message is not a call: ", chat_msg);
+    print("Chat message is not a call: ", chat_msg);
     return false;
   }
 
@@ -304,21 +305,21 @@ async function unsendAllVisibleMessages() {
     // Remove reactions from chat message if possible
     if (!isMessageFromUser(recentMessage) &&
         !(await removeReactionFromMessage(recentMessage))) {
-      console.log("Could not successfully remove the reactions! Skipping holder: ", recentMessage);
+      print("Could not successfully remove the reactions! Skipping holder: ", recentMessage);
       continue;
     }
     // Unsend message from chat if possible
     if (!(await unsendMessage(recentMessage))) {
-      console.log("Could not successfully unsend the message! Skipping holder: ", recentMessage);
+      print("Could not successfully unsend the message! Skipping holder: ", recentMessage);
       continue;
     }
   }
-  console.log("Removed all holders.");
+  print("Removed all holders.");
 
   // Now see if we need to scroll up.
   const topOfChainText = document.querySelector(TOP_OF_CHAIN_QUERY);
   if ((!scroller_ || scroller_.scrollTop === 0) && Boolean(topOfChainText)) {
-    console.log("Reached top of chain: ", topOfChainText);
+    print("Reached top of chain: ", topOfChainText);
     return { status: STATUS.COMPLETE };
   }
 
@@ -328,7 +329,7 @@ async function unsendAllVisibleMessages() {
   let loader = null;
   scroller_.scrollTop = 0;
   for (let i = 0; i < 10; ++i) {
-    console.log("Waiting for loading messages to populate...", loader);
+    print("Waiting for loading messages to populate...", loader);
     await sleep(1000);
     loader = document.querySelector(LOADING_QUERY);
     if (!loader) break;
@@ -338,10 +339,10 @@ async function unsendAllVisibleMessages() {
 }
 
 async function deleteAllRunner() {
-  console.log("Starting delete all runner removal");
+  print("Starting delete all runner removal");
   let sleepTime = await unsendAllVisibleMessages();
   while (sleepTime.status === STATUS.CONTINUE) {
-    console.log(`Sleeping to avoid rate limits: ${sleepTime.data / 1000}`);
+    print(`Sleeping to avoid rate limits: ${sleepTime.data / 1000}`);
     await sleep(sleepTime.data);
     sleepTime = await unsendAllVisibleMessages();
   }
@@ -349,24 +350,103 @@ async function deleteAllRunner() {
 }
 
 
-async function removeHandler() {
-  console.log("Sleeping to allow the page to load fully...");
+async function removeHandler(toggleLog=true) {
+  // Hijack log
+  hijackLog(toggleLog);
+
+  print("Sleeping to allow the page to load fully...");
   await sleep(10000); // give the page a bit to fully load.
 
   const status = await deleteAllRunner();
 
   if (status === STATUS.COMPLETE) {
-    console.log("Success!");
+    print("Success!");
     alert("Successfully cleared all messages!");
     return null;
   }
   if (status === STATUS.STOPPED) {
-    console.log("Deleting process was stopped");
+    print("Deleting process was stopped");
     alert("Deleting process was stopped");
     return null
   }
-  console.log("Failed to complete removal.");
+  print("Failed to complete removal.");
   alert("ERROR: something went wrong. Failed to complete removal.");
+}
+
+function print(...string) {
+  console.log(...string);
+
+  if (log = document.getElementById("log")) {
+    const logLine = document.createElement("li");
+    logLine.innerText = Array.from(string).join(" ");
+    log.appendChild(logLine);
+
+    // Scroll to the bottom of the log box
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+function hijackLog(toggle=true) {
+  // Remove the log box div if it exists
+  document.getElementById("logDiv")?.remove();
+
+  if (!toggle) return;
+
+  print("Adding log to screen");
+
+  // Creating div container for log box and toggle button
+  const div = document.createElement("div");
+  div.id = "logDiv";
+  div.style.position = "fixed";
+  div.style.bottom = "0";
+  div.style.left = "0";
+
+  // Log Box
+  const log = document.createElement("ul");
+  log.id = "log";
+  log.style.backgroundColor = "white";
+  log.style.padding = "10px";
+  log.style.zIndex = "10000";
+  log.style.maxWidth = "200px";
+  log.style.maxHeight = "500px";
+  log.style.overflow = "scroll";
+  log.style.border = "1px solid black";
+  log.style.fontSize = "12px";
+  log.style.fontFamily = "monospace";
+  log.style.color = "black";
+  log.style.listStyleType = "none"; // Remove bullet points
+  log.style.margin = "0"; //So there isn't any padding between the top and bottom of the log
+
+  // Toggle Log Box Button
+  const toggleLogButton = document.createElement("button");
+  toggleLogButton.textContent = "Hide Log";
+  // On click, hide/reveal the log box
+  toggleLogButton.onclick = function() {
+    // Reveal the log box
+    if (log.style.display === "none") {
+      log.style.display = "block";
+
+      // Scroll to the bottom of the log box
+      log.scrollTop = log.scrollHeight;
+
+      this.textContent = "Hide Log";
+    }
+    // Hide the log box
+    else {
+      log.style.display = "none";
+      this.textContent = "Reveal Log";
+    }
+  };
+
+  // Append toggle button and log box to div container
+  div.appendChild(toggleLogButton);
+  div.appendChild(log);
+
+  // Append div container to the DOM
+  document.body.appendChild(div);
+
+  print("Successfully added log to screen");
+  print("To see more complete logs, hit f12 or open the developer console.");
 }
 
 // Main ----------------------------------------------------------------------
@@ -374,27 +454,25 @@ async function removeHandler() {
 browser.runtime.onMessage.addListener((msg, sender) => {
   // Make sure we are using english language messenger.
   if (document.documentElement.lang !== "en") {
-    alert(
-      "ERROR: detected non-English language. Fire Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.",
-    );
+    alert("ERROR: detected non-English language. Fire Messenger only works when Facebook settings are set to English. Please change your profile settings and try again.");
     return;
   }
 
-  console.log("Got action: ", msg.action);
+  print("Got action: ", msg.action);
   if (msg.action === "REMOVE") {
-    const doRemove = confirm(
-      "Removal will nuke your messages and will prevent you from seeing the messages of other people in this chat. We HIGHLY recommend backing up your messages first. Continue?",
-    );
-    if (doRemove) {
-      console.log(`Setting delay to ${msg.data} seconds.`);
-      DELAY = msg.data || DELAY;
-      STOP = false;
-      removeHandler();
-    }
+    const doRemove = confirm("Removal will nuke your messages and will prevent you from seeing the messages of other people in this chat. We HIGHLY recommend backing up your messages first. Continue?");
+    if (!doRemove) return;
+
+    print(`Setting delay to ${msg.data} seconds.`);
+    DELAY = msg.data || DELAY;
+    STOP = false;
+    removeHandler(msg.toggleLog);
+
   } else if (msg.action === "STOP") {
-    console.log(`Received Stopped signal`);
+    print(`Received Stopped signal`);
     STOP = true;
   } else {
-    console.log("Unknown action.");
+    print("Unknown action.");
   }
 });
+})();

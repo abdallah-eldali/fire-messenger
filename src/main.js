@@ -45,12 +45,14 @@ const STATUS = {
 
 let DELAY = 5;
 let STOP = false;
+let SPEED_TIMER = 0;
 const DEBUG_MODE = false; // When set, does not actually remove messages.
 
 let scrollerCache = null;
 
 // Helper functions ----------------------------------------------------------
 function sleep(ms) {
+  if (ms <= 0) return;
   function getRandom(min, max) {
     // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -167,7 +169,7 @@ async function removeReactionFromMessage(chat_msg) {
   }
   // Close reaction window
   print("Closing reaction window");
-  //await sleep(500);
+  await sleep(SPEED_TIMER);
   windowPopup.querySelector(`[aria-label="Close"][role="button"]`).click();
   await sleep(500); // Sleep for a bit after closing the reactions window to let Messenger update the chat message
 
@@ -200,7 +202,7 @@ async function unsendMessage(chat_msg) {
   print("Triggering hover on: ", chat_msg);
   chat_msg.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
 
-  //await sleep(500);
+  await sleep(SPEED_TIMER);
 
   // Get the more button of the message (the 3 elipses besides a chat message)
   const moreButton = await chat_msg.parentElement?.parentElement?.waitForQuerySelector(MORE_BUTTONS_QUERY, 5000);
@@ -212,7 +214,7 @@ async function unsendMessage(chat_msg) {
   print("Clicking more button: ", moreButton);
   moreButton.click();
 
-  //await sleep(500);
+  await sleep(SPEED_TIMER);
   // Hit the remove button to tget the popup
   const removeButton = await document.waitForQuerySelector(REMOVE_BUTTON_QUERY, 5000);
   if (!removeButton) {
@@ -223,7 +225,7 @@ async function unsendMessage(chat_msg) {
   print("Clicking remove button: ", removeButton);
   removeButton.click();
 
-  //await sleep(500);
+  await sleep(SPEED_TIMER);
   // Hit unsend on the popup. If we are in debug mode, just log the popup.
   const unsendButton = await document.waitForQuerySelector(REMOVE_CONFIRMATION_QUERY, 5000, "Remove");
   const cancelButton = await document.waitForQuerySelector(CANCEL_CONFIRMATION_QUERY, 5000, "Cancel");
@@ -245,7 +247,7 @@ async function unsendMessage(chat_msg) {
     unsendButton.click();
   }
 
-  //await sleep(500);
+  await sleep(SPEED_TIMER);
   // Check if chat_msg was deleted (is it still connected to the DOM?)
   const isMessageDisconnectedFromDOM = await chat_msg.waitForDisconnectWithTimeout(1000);
   return isMessageDisconnectedFromDOM;
@@ -466,8 +468,8 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     print(`Setting delay to ${msg.data} seconds.`);
     DELAY = msg.data || DELAY;
     STOP = false;
+    SPEED_TIMER = msg.speedMode ? 500 : SPEED_TIMER;
     removeHandler(msg.toggleLog);
-
   } else if (msg.action === "STOP") {
     print(`Received Stopped signal`);
     STOP = true;
